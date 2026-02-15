@@ -48,17 +48,17 @@ Tek komutla zamanlanmis kayit + canli GUI + otomatik decode:
 
 ```bash
 # Meteor uydusu (137.9 MHz, 1024 kS/s, 24 dakika, saat 21:02'de basla)
-python3 scripts/meteor_capture.py \
+python3 recorder/meteor_capture.py \
     --freq 137.9 --gain 44.5 --duration 24 --start 21:02 \
     --sr 1024000 --label "Meteor_M2-3"
 
 # Radyosonde balon (403 MHz, 250 kS/s, 120 dakika, saat 14:58'de basla)
-python3 scripts/meteor_capture.py \
+python3 recorder/meteor_capture.py \
     --freq 403.0 --gain 44.5 --duration 120 --start 14:58 \
     --sr 250000 --label "Radiosonde_Balon"
 
 # Hemen basla (--start olmadan)
-python3 scripts/meteor_capture.py \
+python3 recorder/meteor_capture.py \
     --freq 137.9 --gain 44.5 --duration 10 --label "Test"
 ```
 
@@ -88,11 +88,11 @@ python3 scripts/meteor_capture.py \
 Herhangi bir IQ dosyasini canli izlemek icin (kayit devam ederken veya kayit bittikten sonra):
 
 ```bash
-python3 scripts/sdr_monitor.py <iq_dosyasi> [ornekleme_hizi] [merkez_frekans_mhz]
+python3 recorder/sdr_monitor.py <iq_dosyasi> [ornekleme_hizi] [merkez_frekans_mhz]
 
 # Ornekler:
-python3 scripts/sdr_monitor.py capture_137.9MHz.cu8 1024000 137.9
-python3 scripts/sdr_monitor.py radiosonde.cu8 250000 403.0
+python3 recorder/sdr_monitor.py capture_137.9MHz.cu8 1024000 137.9
+python3 recorder/sdr_monitor.py radiosonde.cu8 250000 403.0
 ```
 
 ### meteor_final.sh — Interaktif Bash Scripti
@@ -100,7 +100,7 @@ python3 scripts/sdr_monitor.py radiosonde.cu8 250000 403.0
 Terminal uzerinden sorulu-cevapli yakalama:
 
 ```bash
-bash scripts/meteor_final.sh
+bash recorder/meteor_final.sh
 ```
 
 ---
@@ -109,13 +109,14 @@ bash scripts/meteor_final.sh
 
 ```
 .
-├── scripts/
-│   ├── meteor_capture.py    # Ana yakalama sistemi (zamanlayici + GUI + decode)
-│   ├── sdr_monitor.py       # Bagimsiz canli spektrum monitoru
-│   └── meteor_final.sh      # Interaktif bash yakalama scripti
-├── data/                    # Cozumlenmmis ciktilar (goruntuler, telemetri)
-├── images/                  # Ornek goruntuler ve ekran goruntuleri
-├── raw/                     # Ham IQ verileri (Git LFS)
+├── recorder/
+│   ├── meteor_capture.py       # Ana yakalama sistemi (zamanlayici + GUI + decode)
+│   ├── sdr_monitor.py          # Bagimsiz canli spektrum monitoru
+│   ├── meteor_final.sh         # Interaktif bash yakalama scripti
+│   └── KULLANIM_KILAVUZU.md    # Detayli kullanim kilavuzu
+├── data/                       # Cozumlenmis ciktilar (goruntuler, telemetri)
+├── images/                     # Ornek goruntuler ve ekran goruntuleri
+├── raw/                        # Ham IQ verileri (Git LFS)
 └── README.md
 ```
 
