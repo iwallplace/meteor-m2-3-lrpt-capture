@@ -1,17 +1,12 @@
 #!/usr/bin/env python3
 """
-Meteor/SDR Otonom Yakalama Sistemi
-- Zamanlayici (belirlenen saatte baslar)
-- SDR testi (kayit oncesi kontrol)
-- Ham IQ kayit (rtl_sdr)
-- Canli spektrum monitoru (PyQt5 GUI)
-- Otomatik SatDump decode (kayit bitince)
-- GUI kayit bitince otomatik kapanir
+SDR Capture — Evrensel Yakalama Sistemi
+Tek dosya: Zamanlanmis kayit + canli spektrum/waterfall/SNR GUI + otomatik decode
 
 Kullanim:
-  python3 meteor_capture.py --freq 137.9 --gain 44.5 --duration 24 --start 21:02 --label "Meteor M2-3" --output /Volumes/Hangar/meteor_capture
-  python3 meteor_capture.py --freq 403.0 --gain 44.5 --duration 60 --start 15:00 --label "Radiosonde" --sr 250000
-  python3 meteor_capture.py --freq 137.9 --gain 44.5 --duration 24 --label "Meteor" (hemen baslar)
+  python3 meteor_capture.py --freq 137.9 --duration 24 --start 21:02 --label "Meteor"
+  python3 meteor_capture.py --freq 403.0 --duration 120 --start 14:58 --sr 250000 --label "Balon"
+  python3 meteor_capture.py --freq 137.9 --duration 10 --label "Test"
 """
 import sys, os, time, signal, subprocess, threading, argparse
 import numpy as np
@@ -134,8 +129,8 @@ class SpectrumCanvas(QWidget):
     def _draw_waterfall(self, p, w, h):
         wf = self.waterfall_data
         rows, cols = wf.shape
-        vmin = self.noise_floor - 3
-        vrng = max(21, 1)
+        vmin = self.noise_floor - 1
+        vrng = max(self.snr * 1.2, 8)
 
         # Numpy ile toplu renk hesapla
         norm = np.clip((wf - vmin) / vrng, 0, 1)
@@ -234,8 +229,8 @@ class CaptureMonitor(QMainWindow):
         self.decode_done = False
         self.waiting = True
 
-        self.FFT_SIZE = 1024
-        self.WATERFALL_ROWS = 80
+        self.FFT_SIZE = 4096
+        self.WATERFALL_ROWS = 120
         self.freqs = np.linspace(args.freq - args.sr/2e6, args.freq + args.sr/2e6, self.FFT_SIZE)
         self.waterfall = np.full((self.WATERFALL_ROWS, self.FFT_SIZE), -50.0)
         self.peak_spectrum = np.full(self.FFT_SIZE, -80.0)
@@ -448,6 +443,7 @@ class CaptureMonitor(QMainWindow):
 
             self.wf_canvas.waterfall_data = self.waterfall
             self.wf_canvas.noise_floor = nf
+            self.wf_canvas.snr = snr
             self.wf_canvas.update()
 
             self.snr_canvas.snr_data = list(self.snr_history)
@@ -530,14 +526,14 @@ class CaptureMonitor(QMainWindow):
 # MAIN
 # ============================================================
 def main():
-    parser = argparse.ArgumentParser(description='SDR Capture + Monitor')
-    parser.add_argument('--freq', type=float, required=True, help='Merkez frekans (MHz)')
+    parser = argparse.ArgumentParser(description='SDR Capture — Kayit ve Izleme')
+    parser.add_argument('--freq', type=float, default=137.9, help='Merkez frekans (MHz)')
     parser.add_argument('--gain', type=float, default=44.5, help='Kazanc (dB)')
-    parser.add_argument('--duration', type=int, required=True, help='Kayit suresi (dakika)')
+    parser.add_argument('--duration', type=int, default=15, help='Kayit suresi (dakika)')
     parser.add_argument('--start', type=str, default=None, help='Baslama saati HH:MM (bos = hemen)')
     parser.add_argument('--sr', type=int, default=1024000, help='Sample rate (S/s)')
-    parser.add_argument('--label', type=str, default='SDR Capture', help='Etiket')
-    parser.add_argument('--output', type=str, default='/Volumes/Hangar/meteor_capture', help='Cikti klasoru')
+    parser.add_argument('--label', type=str, default='SDR_Capture', help='Etiket')
+    parser.add_argument('--output', type=str, default='.', help='Cikti klasoru')
 
     args = parser.parse_args()
 

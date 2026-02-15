@@ -83,18 +83,6 @@ python3 recorder/meteor_capture.py \
 6. Meteor frekansi ise SatDump ile otomatik decode eder
 7. 10 saniye sonra GUI kapanir
 
-### sdr_monitor.py — Bagimsiz Canli Monitor
-
-Herhangi bir IQ dosyasini canli izlemek icin (kayit devam ederken veya kayit bittikten sonra):
-
-```bash
-python3 recorder/sdr_monitor.py <iq_dosyasi> [ornekleme_hizi] [merkez_frekans_mhz]
-
-# Ornekler:
-python3 recorder/sdr_monitor.py capture_137.9MHz.cu8 1024000 137.9
-python3 recorder/sdr_monitor.py radiosonde.cu8 250000 403.0
-```
-
 ### meteor_final.sh — Interaktif Bash Scripti
 
 Terminal uzerinden sorulu-cevapli yakalama:
@@ -110,8 +98,7 @@ bash recorder/meteor_final.sh
 ```
 .
 ├── recorder/
-│   ├── meteor_capture.py       # Ana yakalama sistemi (zamanlayici + GUI + decode)
-│   ├── sdr_monitor.py          # Bagimsiz canli spektrum monitoru
+│   ├── meteor_capture.py       # Tek dosya: kayit + canli GUI + decode
 │   ├── meteor_final.sh         # Interaktif bash yakalama scripti
 │   └── KULLANIM_KILAVUZU.md    # Detayli kullanim kilavuzu
 ├── data/                       # Cozumlenmis ciktilar (goruntuler, telemetri)
